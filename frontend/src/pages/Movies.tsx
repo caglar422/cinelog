@@ -4,6 +4,8 @@ import { watchlistService } from '../services/watchlistService';
 import { watchedService } from '../services/watchedService';
 import type { Movie } from '../types';
 import Navbar from '../components/Navbar';
+import { ratingService } from '../services/ratingService';
+import StarRating from '../components/StarRating';
 
 const Movies = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -50,6 +52,15 @@ const Movies = () => {
       alert('Failed to mark as watched');
     }
   };
+
+  const handleRate = async (movieId: string, score: number) => {
+  try {
+    await ratingService.addRating(movieId, score);
+    alert(`Rated ${score}/10!`);
+  } catch (error) {
+    alert('Failed to rate movie');
+  }
+};
 
   if (loading) return <div style={{ textAlign: 'center', padding: '50px', color: '#fff', fontSize: '20px' }}>Loading...</div>;
 
@@ -155,6 +166,11 @@ const Movies = () => {
                 <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>
                   {movie.genres.join(', ')}
                 </p>
+
+                <StarRating 
+                onRate={(score) => handleRate(movie._id, score)} 
+                />
+                
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button 
                     onClick={() => handleAddToWatchlist(movie._id)}
