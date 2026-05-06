@@ -234,6 +234,26 @@ This project is open source and available under the [MIT License](LICENSE).
 - GitHub: [@caglar422](https://github.com/caglar422)
 
 ---
+---
+
+## 📸 Screenshots
+
+### Login Page
+![Login](screenshots/login.png)
+
+### Register Page
+![Register](screenshots/register.png)
+
+### Movies Page
+![Movies](screenshots/movies.png)
+
+### Watchlist
+![Watchlist](screenshots/watchlist.png)
+
+### Watched Movies
+![Watched](screenshots/watchedmovies.png)
+
+---
 
 ## 🙏 Acknowledgments
 
