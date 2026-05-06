@@ -11,12 +11,23 @@ const Movies = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [userRatings, setUserRatings] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     const loadMovies = async () => {
       try {
         const data = await movieService.getAllMovies(1, 20, search);
         setMovies(data.movies);
+        
+        // Load user ratings
+        const ratings = await ratingService.getUserRatings();
+        const ratingsMap: { [key: string]: number } = {};
+        ratings.forEach((rating) => {
+          if (rating.movieId && typeof rating.movieId === 'object' && '_id' in rating.movieId) {
+            ratingsMap[rating.movieId._id] = rating.score;
+          }
+        });
+        setUserRatings(ratingsMap);
       } catch (error) {
         console.error('Failed to load movies', error);
       } finally {
@@ -54,13 +65,14 @@ const Movies = () => {
   };
 
   const handleRate = async (movieId: string, score: number) => {
-  try {
-    await ratingService.addRating(movieId, score);
-    alert(`Rated ${score}/10!`);
-  } catch (error) {
-    alert('Failed to rate movie');
-  }
-};
+    try {
+      await ratingService.addRating(movieId, score);
+      setUserRatings({ ...userRatings, [movieId]: score });
+      alert(`Rated ${score}/10!`);
+    } catch (error) {
+      alert('Failed to rate movie');
+    }
+  };
 
   if (loading) return <div style={{ textAlign: 'center', padding: '50px', color: '#fff', fontSize: '20px' }}>Loading...</div>;
 
@@ -168,9 +180,10 @@ const Movies = () => {
                 </p>
 
                 <StarRating 
-                onRate={(score) => handleRate(movie._id, score)} 
+                  onRate={(score) => handleRate(movie._id, score)}
+                  currentRating={userRatings[movie._id] || 0}
                 />
-                
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button 
                     onClick={() => handleAddToWatchlist(movie._id)}

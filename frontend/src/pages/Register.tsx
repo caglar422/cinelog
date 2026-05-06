@@ -10,20 +10,23 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    try {
-      await authService.register(username, email, password);
-      navigate('/movies');
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || 'Registration failed');
-      } else {
-        setError('Registration failed');
-      }
+  try {
+    await authService.register(username, email, password);
+    navigate('/movies');
+  } catch (err) {
+    if (err && typeof err === 'object' && 'response' in err) {
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      setError(axiosError.response?.data?.message || 'Registration failed. Please try again.');
+    } else if (err instanceof Error) {
+      setError('Registration failed. Please try again.');
+    } else {
+      setError('Registration failed. Please try again.');
     }
-  };
+  }
+};
 
   return (
     <div style={{

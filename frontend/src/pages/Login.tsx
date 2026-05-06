@@ -9,20 +9,24 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    try {
-      await authService.login(email, password);
-      navigate('/movies');
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || 'Login failed');
-      } else {
-        setError('Login failed');
-      }
+  try {
+    await authService.login(email, password);
+    navigate('/movies');
+  } catch (err) {
+    // Backend'den gelen hata mesajını yakalayalım
+    if (err && typeof err === 'object' && 'response' in err) {
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      setError(axiosError.response?.data?.message || 'Invalid email or password');
+    } else if (err instanceof Error) {
+      setError('Invalid email or password');
+    } else {
+      setError('Invalid email or password');
     }
-  };
+  }
+};
 
   return (
     <div style={{
