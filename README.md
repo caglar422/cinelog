@@ -22,6 +22,32 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 
 ---
 
+---
+
+## 👥 User Stories
+
+### Authentication
+- **As a new user**, I want to register an account so that I can start tracking movies
+- **As a registered user**, I want to log in securely so that I can access my personal movie lists
+- **As a logged-in user**, I want to log out so that my account stays secure
+
+### Movie Discovery
+- **As a movie enthusiast**, I want to browse all available movies so that I can discover new films
+- **As a user**, I want to search for movies by title, director, or genre so that I can quickly find specific films
+- **As a user**, I want to view detailed information about a movie so that I can decide if I want to watch it
+
+### Rating & Reviews
+- **As a user**, I want to rate movies on a 1-10 scale so that I can remember how much I enjoyed them
+- **As a user**, I want to see my previous ratings so that I can track my preferences over time
+
+### List Management
+- **As a user**, I want to add movies to my watchlist so that I can remember films I want to see
+- **As a user**, I want to mark movies as watched so that I can track what I've already seen
+- **As a user**, I want to remove movies from my lists so that I can keep them organized
+- **As a user**, I want to see all my watchlist and watched movies in one place so that I can manage my viewing easily
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -44,6 +70,133 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 ### DevOps
 - **Docker** - Containerization
 - **docker-compose** - Multi-container orchestration
+
+---
+
+---
+
+## 🏗️ Architecture
+
+### System Architecture (C4 - Container Diagram)
+
+```mermaid
+graph TB
+    subgraph "CineLog System"
+        User[User/Browser]
+        
+        subgraph "Frontend Container"
+            React[React + Vite<br/>TypeScript]
+        end
+        
+        subgraph "Backend Container"
+            API[Express API<br/>TypeScript<br/>JWT Auth]
+        end
+        
+        subgraph "Database Container"
+            MongoDB[(MongoDB<br/>Mongoose)]
+        end
+    end
+    
+    User -->|HTTP/HTTPS| React
+    React -->|REST API Calls| API
+    API -->|Read/Write| MongoDB
+    
+    style React fill:#61DAFB,stroke:#333,stroke-width:2px,color:#000
+    style API fill:#68A063,stroke:#333,stroke-width:2px,color:#fff
+    style MongoDB fill:#4DB33D,stroke:#333,stroke-width:2px,color:#fff
+```
+
+### Database Schema (ERD)
+
+```mermaid
+erDiagram
+    USER ||--o{ RATING : creates
+    USER ||--o{ WATCHLIST : maintains
+    USER ||--o{ WATCHED : tracks
+    MOVIE ||--o{ RATING : receives
+    MOVIE ||--o{ WATCHLIST : appears_in
+    MOVIE ||--o{ WATCHED : appears_in
+    
+    USER {
+        ObjectId _id PK
+        string username
+        string email
+        string password
+        date createdAt
+    }
+    
+    MOVIE {
+        ObjectId _id PK
+        string title
+        string[] genres
+        number year
+        string director
+        string poster
+        string plot
+        number runtime
+        number rating
+    }
+    
+    RATING {
+        ObjectId _id PK
+        ObjectId userId FK
+        ObjectId movieId FK
+        number score
+        date createdAt
+    }
+    
+    WATCHLIST {
+        ObjectId _id PK
+        ObjectId userId FK
+        ObjectId movieId FK
+        date addedAt
+    }
+    
+    WATCHED {
+        ObjectId _id PK
+        ObjectId userId FK
+        ObjectId movieId FK
+        date watchedAt
+    }
+```
+
+### Data Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Frontend
+    participant A as API/Backend
+    participant D as MongoDB
+    
+    U->>F: 1. Register/Login
+    F->>A: POST /api/auth/login
+    A->>D: Verify credentials
+    D-->>A: User data
+    A-->>F: JWT Token
+    F-->>U: Redirect to Movies
+    
+    U->>F: 2. Browse Movies
+    F->>A: GET /api/movies
+    A->>D: Fetch movies
+    D-->>A: Movie list
+    A-->>F: JSON response
+    F-->>U: Display movies
+    
+    U->>F: 3. Rate Movie (★★★★★)
+    F->>A: POST /api/ratings (JWT)
+    A->>D: Save rating
+    D-->>A: Success
+    A-->>F: Rating saved
+    F-->>U: Update UI
+    
+    U->>F: 4. Add to Watchlist
+    F->>A: POST /api/watchlist (JWT)
+    A->>D: Add to watchlist
+    D-->>A: Success
+    A-->>F: Confirmation
+    F-->>U: Added to list
+```
 
 ---
 
