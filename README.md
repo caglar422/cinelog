@@ -204,35 +204,104 @@ sequenceDiagram
 
 ### Prerequisites
 
-Make sure you have the following installed:
-- [Node.js](https://nodejs.org/) (v20+)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Git](https://git-scm.com/)
+Make sure you have the following installed on your system:
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) - **Required**
+- [Git](https://git-scm.com/) - **Required**
 
-### Installation
+**Note:** You do NOT need to install Node.js or MongoDB separately. Docker will handle everything.
 
-1. **Clone the repository**
+### Step-by-Step Installation
+
+#### 1. Clone the Repository
 ```bash
 git clone https://github.com/caglar422/cinelog.git
 cd cinelog
 ```
 
-2. **Start the application with Docker**
+#### 2. Start Docker Desktop
+Make sure Docker Desktop is running on your computer before proceeding.
+
+#### 3. Build and Start All Services
 ```bash
 docker-compose up --build
 ```
 
-3. **Seed the database with sample movies**
+**Wait for all services to start.** You should see:
+- ✅ `cinelog-mongo` - MongoDB database
+- ✅ `cinelog-backend` - Express API server
+- ✅ `cinelog-frontend` - React frontend
 
-Open a new terminal and run:
+This may take 2-5 minutes on the first run.
+
+#### 4. Seed the Database (Required)
+
+**Open a NEW terminal window** (keep the first one running) and execute:
+
 ```bash
 docker exec -it cinelog-backend npm run seed
 ```
 
-4. **Access the application**
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
-- MongoDB: localhost:27017
+You should see:
+🌱 Starting database seed...
+🗑️  Cleared existing movies
+✅ Inserted 8 movies
+🎉 Database seeded successfully!
+
+#### 5. Access the Application
+
+Open your browser and navigate to:
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:5000/api/health
+
+#### 6. Create an Account and Start Using
+
+1. Click **Register** on the login page
+2. Create a new account
+3. Start browsing and rating movies!
+
+---
+
+### Stopping the Application
+
+Press `Ctrl + C` in the terminal where `docker-compose` is running, or run:
+
+```bash
+docker-compose down
+```
+
+### Restarting the Application
+
+Next time you want to run the app:
+
+```bash
+docker-compose up
+```
+
+**Note:** You only need to run `--build` and seed the database on the first run.
+
+---
+
+### Troubleshooting
+
+**Problem:** "Port 5173 is already in use"
+```bash
+docker-compose down
+docker-compose up
+```
+
+**Problem:** "Cannot connect to MongoDB"
+- Make sure Docker Desktop is running
+- Try restarting Docker Desktop
+
+**Problem:** "No movies showing"
+- You forgot to seed the database! Run step 4 again.
+
+**Problem:** Fresh start (delete everything)
+```bash
+docker-compose down -v
+docker-compose up --build
+docker exec -it cinelog-backend npm run seed
+```
 
 ---
 
