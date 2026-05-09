@@ -14,9 +14,9 @@ const Login = () => {
 
   try {
     await authService.login(email, password);
-    navigate('/movies');
+    await new Promise(resolve => setTimeout(resolve, 100));
+    window.location.href = '/movies';
   } catch (err) {
-    // Backend'den gelen hata mesajını yakalayalım
     if (err && typeof err === 'object' && 'response' in err) {
       const axiosError = err as { response?: { data?: { message?: string } } };
       setError(axiosError.response?.data?.message || 'Invalid email or password');
