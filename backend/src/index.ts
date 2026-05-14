@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './db';
+import helmet from 'helmet';
+
 
 // Routes
 import authRoutes from './routes/authRoutes';
@@ -22,7 +24,7 @@ connectDB();
 const allowedOrigins = process.env.FRONTEND_URL
   ? [process.env.FRONTEND_URL]
   : ['http://localhost:5173', 'http://localhost:3000'];
-
+app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.)

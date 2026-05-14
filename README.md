@@ -61,7 +61,7 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 - **Express** - Web framework
 - **TypeScript** - Type-safe JavaScript
 - **JWT** - Authentication
-- **bcrypt** - Password hashing
+- **bcryptjs** — Password hashing
 
 ### Database
 - **MongoDB** - NoSQL database
@@ -476,6 +476,20 @@ This project is open source and available under the [MIT License](LICENSE).
 ![Watched](screenshots/watchedmovies.png)
 
 ---
+
+---
+
+## ⚠️ Known Limitations
+
+- Movie data is seeded (not fetched from external API)
+- No pagination on large movie collections
+- No password reset functionality
+- JWT stored in localStorage (vulnerable to XSS)
+- No user profile page or settings
+- MongoDB runs without authentication in development
+
+---
+
 
 ## 🙏 Acknowledgments
 
