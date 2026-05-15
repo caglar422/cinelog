@@ -93,7 +93,7 @@ const Watchlist = () => {
                 }}
               >
                 <img 
-                  src={item.movieId.poster} 
+                  src={item.movieId.image_url} 
                   alt={item.movieId.title} 
                   style={{ 
                     width: '100%', 

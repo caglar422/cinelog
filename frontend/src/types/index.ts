@@ -14,6 +14,7 @@ export interface Movie {
   plot: string;
   runtime: number;
   rating: number;
+  image_url: string;
 }
 
 export interface Rating {

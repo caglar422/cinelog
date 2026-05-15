@@ -11,6 +11,7 @@ const Watched = () => {
     const loadWatched = async () => {
       try {
         const data = await watchedService.getWatchedMovies();
+        console.log(watched);
         setWatched(data);
       } catch (error) {
         console.error('Failed to load watched movies', error);
@@ -94,7 +95,7 @@ const Watched = () => {
               >
                 <div style={{ position: 'relative' }}>
                   <img 
-                    src={item.movieId.poster} 
+                    src={item.movieId.image_url} 
                     alt={item.movieId.title} 
                     style={{ 
                       width: '100%', 

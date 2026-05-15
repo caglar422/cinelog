@@ -152,7 +152,7 @@ const Movies = () => {
               }}
             >
               <img 
-                src={movie.poster} 
+                src={movie.image_url} 
                 alt={movie.title} 
                 style={{ 
                   width: '100%', 
