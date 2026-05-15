@@ -9,6 +9,7 @@ export interface IMovie extends Document {
   plot: string;
   runtime: number;
   rating: number;
+  image_url: string;
 }
 
 const MovieSchema: Schema = new Schema({
@@ -47,7 +48,12 @@ const MovieSchema: Schema = new Schema({
     default: 0,
     min: 0,
     max: 10
+  },
+  image_url: {
+    type: String,
+    required: false,
   }
+
 });
 
 export default mongoose.model<IMovie>('Movie', MovieSchema);
