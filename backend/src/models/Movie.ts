@@ -10,6 +10,7 @@ export interface IMovie extends Document {
   runtime: number;
   rating: number;
   image_url: string;
+  description?: string
 }
 
 const MovieSchema: Schema = new Schema({
@@ -52,7 +53,8 @@ const MovieSchema: Schema = new Schema({
   image_url: {
     type: String,
     required: false,
-  }
+  },
+  
 
 });
 

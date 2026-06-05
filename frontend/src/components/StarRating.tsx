@@ -20,7 +20,9 @@ const StarRating = ({ onRate, currentRating = 0 }: StarRatingProps) => {
         <button
           key={star}
           type="button"
-          onClick={() => handleClick(star)}
+          onClick={(e) =>{
+            e.stopPropagation();
+            handleClick(star)}}
           onMouseEnter={() => setHover(star)}
           onMouseLeave={() => setHover(0)}
           style={{

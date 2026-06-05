@@ -15,6 +15,7 @@ export interface Movie {
   runtime: number;
   rating: number;
   image_url: string;
+  description?: string;  
 }
 
 export interface Rating {

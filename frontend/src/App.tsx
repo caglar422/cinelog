@@ -2,12 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Movies from './pages/Movies';
+import MovieDetail from './pages/MovieDetail';
 import Watchlist from './pages/Watchlist';
 import Watched from './pages/Watched';
-import { authService } from './services/authService';
 
 function App() {
-  const isAuthenticated = authService.isAuthenticated();
+  
+  const isAuthenticated = !!localStorage.getItem('token');
 
   return (
     <Router>
@@ -17,6 +18,10 @@ function App() {
         <Route 
           path="/movies" 
           element={isAuthenticated ? <Movies /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/movie/:id"
+          element={isAuthenticated ? <MovieDetail /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/watchlist" 

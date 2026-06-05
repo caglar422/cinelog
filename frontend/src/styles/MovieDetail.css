@@ -1,0 +1,136 @@
+.movie-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  color: #fff;
+  padding: 20px;
+}
+
+.detail-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 80px;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-5px);
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-poster {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.detail-info h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.detail-info p {
+  font-size: 1.1em;
+  margin: 12px 0;
+  color: #e0e0e0;
+}
+
+.detail-info .year,
+.detail-info .director,
+.detail-info .genre,
+.detail-info .rating {
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.detail-info .rating {
+  color: #ffd700;
+  font-size: 1.3em;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  flex-direction: column;
+}
+
+.btn-watchlist,
+.btn-watched {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.btn-watchlist {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.btn-watchlist:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.btn-watched {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #667eea;
+  color: #667eea;
+}
+
+.btn-watched:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-3px);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.2em;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .detail-content {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-info h1 {
+    font-size: 1.8em;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

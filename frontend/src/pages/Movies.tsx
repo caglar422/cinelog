@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // ← EKLE
 import { movieService } from '../services/movieService';
 import { watchlistService } from '../services/watchlistService';
 import { watchedService } from '../services/watchedService';
@@ -8,6 +9,7 @@ import { ratingService } from '../services/ratingService';
 import StarRating from '../components/StarRating';
 
 const Movies = () => {
+  const navigate = useNavigate(); // ← EKLE
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -133,13 +135,14 @@ const Movies = () => {
           {movies.map((movie) => (
             <div 
               key={movie._id} 
+              onClick={() => navigate(`/movie/${movie._id}`)} // ← EKLE
               style={{ 
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '15px',
                 overflow: 'hidden',
                 transition: 'all 0.3s',
-                cursor: 'pointer',
+                cursor: 'pointer', // ← EKLE
                 border: '1px solid rgba(255, 255, 255, 0.1)'
               }}
               onMouseEnter={(e) => {
@@ -185,8 +188,10 @@ const Movies = () => {
                 />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button 
-                    onClick={() => handleAddToWatchlist(movie._id)}
+                  <button
+                  onClick={(e) => {
+                    e.stopPropagation(); 
+                    handleAddToWatchlist(movie._id);}} 
                     style={{
                       padding: '10px',
                       backgroundColor: 'rgba(102, 126, 234, 0.2)',
@@ -210,7 +215,9 @@ const Movies = () => {
                     + Watchlist
                   </button>
                   <button 
-                    onClick={() => handleMarkAsWatched(movie._id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleMarkAsWatched(movie._id)}}
                     style={{
                       padding: '10px',
                       backgroundColor: 'rgba(40, 167, 69, 0.2)',
