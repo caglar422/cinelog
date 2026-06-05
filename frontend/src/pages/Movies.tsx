@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // ← EKLE
+import { useNavigate } from 'react-router-dom';
 import { movieService } from '../services/movieService';
 import { watchlistService } from '../services/watchlistService';
 import { watchedService } from '../services/watchedService';
@@ -7,19 +7,25 @@ import type { Movie } from '../types';
 import Navbar from '../components/Navbar';
 import { ratingService } from '../services/ratingService';
 import StarRating from '../components/StarRating';
+import api from '../services/api';
 
 const Movies = () => {
-  const navigate = useNavigate(); // ← EKLE
+  const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [userRatings, setUserRatings] = useState<{ [key: string]: number }>({});
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await movieService.getAllMovies(1, 20, search);
-        setMovies(data.movies);
+        const data = await api.get('/movies', {
+          params: { page, search, limit: 5 }
+        });
+        setMovies(data.data.movies);
+        setTotalPages(data.data.pages);
         
         // Load user ratings
         const ratings = await ratingService.getUserRatings();
@@ -38,14 +44,12 @@ const Movies = () => {
     };
 
     loadMovies();
-  }, [search]);
+  }, [page, search]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setPage(1);
     setLoading(true);
-    const data = await movieService.getAllMovies(1, 20, search);
-    setMovies(data.movies);
-    setLoading(false);
   };
 
   const handleAddToWatchlist = async (movieId: string) => {
@@ -135,14 +139,14 @@ const Movies = () => {
           {movies.map((movie) => (
             <div 
               key={movie._id} 
-              onClick={() => navigate(`/movie/${movie._id}`)} // ← EKLE
+              onClick={() => navigate(`/movie/${movie._id}`)}
               style={{ 
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '15px',
                 overflow: 'hidden',
                 transition: 'all 0.3s',
-                cursor: 'pointer', // ← EKLE
+                cursor: 'pointer',
                 border: '1px solid rgba(255, 255, 255, 0.1)'
               }}
               onMouseEnter={(e) => {
@@ -179,7 +183,7 @@ const Movies = () => {
                   ⭐ {movie.rating}/10
                 </p>
                 <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>
-                  {movie.genres.join(', ')}
+                  {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres || 'N/A'}
                 </p>
 
                 <StarRating 
@@ -188,10 +192,11 @@ const Movies = () => {
                 />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    handleAddToWatchlist(movie._id);}} 
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToWatchlist(movie._id);
+                    }}
                     style={{
                       padding: '10px',
                       backgroundColor: 'rgba(102, 126, 234, 0.2)',
@@ -217,7 +222,8 @@ const Movies = () => {
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleMarkAsWatched(movie._id)}}
+                      handleMarkAsWatched(movie._id);
+                    }}
                     style={{
                       padding: '10px',
                       backgroundColor: 'rgba(40, 167, 69, 0.2)',
@@ -244,6 +250,34 @@ const Movies = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '40px', marginBottom: '40px', flexWrap: 'wrap' }}>
+          <button 
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: page === 1 ? '#666' : '#667eea', color: '#fff', cursor: page === 1 ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+          >
+            ← Previous
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              style={{ padding: '10px 15px', borderRadius: '8px', border: page === p ? '2px solid #667eea' : '1px solid #667eea', background: page === p ? '#667eea' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              {p}
+            </button>
+          ))}
+
+          <button 
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: page === totalPages ? '#666' : '#667eea', color: '#fff', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+          >
+            Next →
+          </button>
         </div>
       </div>
     </>
