@@ -62,7 +62,7 @@ export default function MovieDetail() {
             </p>
 
             <p className="genre">
-              Genre: {movie.genres?.join(', ') || 'N/A'}
+              Genre: {movie.genres?.length ? movie.genres.join(', ') : (movie as unknown as { genre: string }).genre || 'N/A'}
             </p>
 
             <p className="rating">
@@ -70,7 +70,7 @@ export default function MovieDetail() {
             </p>
 
             <p className="description">
-              {movie.description}
+              {movie.plot || movie.description}
             </p>
           </div>
         </div>

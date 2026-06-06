@@ -29,7 +29,6 @@ const Movies = () => {
         setMovies(data.data.movies);
         setTotalPages(data.data.pages);
         
-        // Load user ratings
         const ratings = await ratingService.getUserRatings();
         const ratingsMap: { [key: string]: number } = {};
         ratings.forEach((rating) => {
@@ -80,6 +79,14 @@ const Movies = () => {
     } catch (error) {
       alert('Failed to rate movie');
     }
+  };
+
+  const getGenre = (movie: Movie) => {
+    if (Array.isArray(movie.genres) && movie.genres.length > 0) {
+      return movie.genres.join(', ');
+    }
+    const m = movie as unknown as { genre?: string };
+    return m.genre || 'N/A';
   };
 
   if (loading) return <div style={{ textAlign: 'center', padding: '50px', color: '#fff', fontSize: '20px' }}>Loading...</div>;
@@ -172,13 +179,9 @@ const Movies = () => {
             }}
           >
             <option value="">All Years</option>
-            <option value="1999">1999</option>
-            <option value="2000">2000</option>
-            <option value="2008">2008</option>
-            <option value="2010">2010</option>
-            <option value="2014">2014</option>
-            <option value="2019">2019</option>
-            <option value="2021">2021</option>
+            {Array.from({ length: 2025 - 1990 + 1 }, (_, i) => 2025 - i).map(y => (
+              <option key={y} value={y}>{y}</option>
+            ))}
           </select>
 
           <select 
@@ -253,7 +256,7 @@ const Movies = () => {
                   ⭐ {movie.rating}/10
                 </p>
                 <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>
-                  {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genre || 'N/A'}
+                  {getGenre(movie)}
                 </p>
 
                 <StarRating 
