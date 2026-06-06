@@ -80,3 +80,30 @@ export const searchMovies = async (req: Request, res: Response): Promise<void> =
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const createMovie = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { title, year, genre, director, rating, image_url, description } = req.body;
+
+    // Validation
+    if (!title || !year || !genre || !director || !image_url) {
+      res.status(400).json({ message: 'Missing required fields' });
+      return;
+    }
+
+    const newMovie = new Movie({
+      title,
+      year,
+      genre,
+      director,
+      rating: rating || 0,
+      image_url,
+      description: description || ''
+    });
+
+    await newMovie.save();
+    res.status(201).json({ message: 'Movie created successfully', movie: newMovie });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create movie', error });
+  }
+};
