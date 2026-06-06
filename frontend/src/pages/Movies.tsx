@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { movieService } from '../services/movieService';
 import { watchlistService } from '../services/watchlistService';
 import { watchedService } from '../services/watchedService';
 import type { Movie } from '../types';
@@ -17,12 +16,15 @@ const Movies = () => {
   const [userRatings, setUserRatings] = useState<{ [key: string]: number }>({});
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [genre, setGenre] = useState('');
+  const [year, setYear] = useState('');
+  const [sort, setSort] = useState('rating');
 
   useEffect(() => {
     const loadMovies = async () => {
       try {
         const data = await api.get('/movies', {
-          params: { page, search, limit: 5 }
+          params: { page, search, genre, year, sort, limit: 5 }
         });
         setMovies(data.data.movies);
         setTotalPages(data.data.pages);
@@ -44,7 +46,7 @@ const Movies = () => {
     };
 
     loadMovies();
-  }, [page, search]);
+  }, [page, search, genre, year, sort]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +99,7 @@ const Movies = () => {
           Discover Movies
         </h1>
         
-        <form onSubmit={handleSearch} style={{ marginBottom: '40px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+        <form onSubmit={handleSearch} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
           <input
             type="text"
             placeholder="Search movies..."
@@ -106,7 +108,7 @@ const Movies = () => {
             style={{ 
               padding: '15px 20px', 
               fontSize: '16px', 
-              width: '400px',
+              width: '300px',
               borderRadius: '10px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -130,6 +132,74 @@ const Movies = () => {
             Search
           </button>
         </form>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '40px' }}>
+          <select 
+            value={genre}
+            onChange={(e) => { setGenre(e.target.value); setPage(1); }}
+            style={{ 
+              padding: '12px 15px', 
+              borderRadius: '8px', 
+              border: '2px solid #667eea', 
+              backgroundColor: '#1a1a3e',
+              color: '#fff', 
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            <option value="">All Genres</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Action">Action</option>
+            <option value="Drama">Drama</option>
+            <option value="Thriller">Thriller</option>
+            <option value="Crime">Crime</option>
+            <option value="Historical">Historical</option>
+          </select>
+
+          <select 
+            value={year}
+            onChange={(e) => { setYear(e.target.value); setPage(1); }}
+            style={{ 
+              padding: '12px 15px', 
+              borderRadius: '8px', 
+              border: '2px solid #667eea', 
+              backgroundColor: '#1a1a3e',
+              color: '#fff', 
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            <option value="">All Years</option>
+            <option value="1999">1999</option>
+            <option value="2000">2000</option>
+            <option value="2008">2008</option>
+            <option value="2010">2010</option>
+            <option value="2014">2014</option>
+            <option value="2019">2019</option>
+            <option value="2021">2021</option>
+          </select>
+
+          <select 
+            value={sort}
+            onChange={(e) => { setSort(e.target.value); setPage(1); }}
+            style={{ 
+              padding: '12px 15px', 
+              borderRadius: '8px', 
+              border: '2px solid #667eea', 
+              backgroundColor: '#1a1a3e',
+              color: '#fff', 
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            <option value="rating">Rating (High to Low)</option>
+            <option value="title">Title (A to Z)</option>
+            <option value="year">Year (Newest)</option>
+          </select>
+        </div>
 
         <div style={{ 
           display: 'grid', 
@@ -183,7 +253,7 @@ const Movies = () => {
                   ⭐ {movie.rating}/10
                 </p>
                 <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>
-                  {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres || 'N/A'}
+                  {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genre || 'N/A'}
                 </p>
 
                 <StarRating 

@@ -7,10 +7,29 @@ export const getAllMovies = async (req: Request, res: Response): Promise<void> =
     const limit = parseInt(req.query.limit as string) || 5;
     const search = (req.query.search as string) || '';
 
+    const genre = (req.query.genre as string) || '';
+    const year = (req.query.year as string) || '';
+    const sort = (req.query.sort as string) || 'rating';
+
     const skip = (page - 1) * limit;
 
-    const query = search ? { title: { $regex: search, $options: 'i' } } : {};
-    const movies = await Movie.find(query).skip(skip).limit(limit);
+    const query: any = {};
+
+    
+    const sortObj: any = {};
+    if (sort === 'rating') sortObj.rating = -1;
+    else if (sort === 'title') sortObj.title = 1;
+    else if (sort === 'year') sortObj.year = -1;
+    
+
+    if (search) query.title = { $regex: search, $options: 'i' };
+    if (genre) query.genre = genre;
+    if (year) query.year = parseInt(year);
+
+    const movies = await Movie.find(query)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit);
     const total = await Movie.countDocuments(query);
 
     res.json({
