@@ -120,19 +120,20 @@ graph TB
     style MongoDB fill:#4DB33D,stroke:#333,stroke-width:2px,color:#fff
 ```
 
+
 ### Database Schema (ERD)
 
 ```mermaid
 erDiagram
-    USER ||--o{ RATING : creates
-    USER ||--o{ WATCHLIST : maintains
-    USER ||--o{ WATCHED : tracks
-    MOVIE ||--o{ RATING : receives
-    MOVIE ||--o{ WATCHLIST : appears_in
-    MOVIE ||--o{ WATCHED : appears_in
+    USER ||--o{ RATING : "creates"
+    USER ||--o{ WATCHLIST : "maintains"
+    USER ||--o{ WATCHED : "tracks"
+    MOVIE ||--o{ RATING : "receives"
+    MOVIE ||--o{ WATCHLIST : "appears in"
+    MOVIE ||--o{ WATCHED : "appears in"
     
     USER {
-        ObjectId _id PK
+        string _id PK
         string username
         string email
         string password
@@ -141,36 +142,35 @@ erDiagram
     }
     
     MOVIE {
-        ObjectId _id PK
+        string _id PK
         string title
-        string[] genres
+        string genres
         number year
         string director
-        string poster
         string plot
         number runtime
         number rating
     }
     
     RATING {
-        ObjectId _id PK
-        ObjectId userId FK
-        ObjectId movieId FK
+        string _id PK
+        string userId FK
+        string movieId FK
         number score
         date createdAt
     }
     
     WATCHLIST {
-        ObjectId _id PK
-        ObjectId userId FK
-        ObjectId movieId FK
+        string _id PK
+        string userId FK
+        string movieId FK
         date addedAt
     }
     
     WATCHED {
-        ObjectId _id PK
-        ObjectId userId FK
-        ObjectId movieId FK
+        string _id PK
+        string userId FK
+        string movieId FK
         date watchedAt
     }
 ```
