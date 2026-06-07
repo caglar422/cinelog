@@ -19,7 +19,7 @@ export const getAllMovies = async (req: Request, res: Response): Promise<void> =
     else if (sort === 'year') sortObj.year = -1;
 
     if (search) query.title = { $regex: search, $options: 'i' };
-    if (genre) query.genres = genre;
+    if (genre) query.$or = [{ genres: genre }, { genre: genre }];
     if (year) query.year = parseInt(year);
 
     const movies = await Movie.find(query).sort(sortObj).skip(skip).limit(limit);
