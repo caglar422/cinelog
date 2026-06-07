@@ -121,60 +121,6 @@ graph TB
 ```
 
 
-### Database Schema (ERD)
-
-```mermaid
-erDiagram
-    USER ||--o{ RATING : "creates"
-    USER ||--o{ WATCHLIST : "maintains"
-    USER ||--o{ WATCHED : "tracks"
-    MOVIE ||--o{ RATING : "receives"
-    MOVIE ||--o{ WATCHLIST : "appears in"
-    MOVIE ||--o{ WATCHED : "appears in"
-    
-    USER {
-        string _id PK
-        string username
-        string email
-        string password
-        boolean isAdmin
-        date createdAt
-    }
-    
-    MOVIE {
-        string _id PK
-        string title
-        string genres
-        number year
-        string director
-        string plot
-        number runtime
-        number rating
-    }
-    
-    RATING {
-        string _id PK
-        string userId FK
-        string movieId FK
-        number score
-        date createdAt
-    }
-    
-    WATCHLIST {
-        string _id PK
-        string userId FK
-        string movieId FK
-        date addedAt
-    }
-    
-    WATCHED {
-        string _id PK
-        string userId FK
-        string movieId FK
-        date watchedAt
-    }
-```
-
 ### Data Flow Diagram
 
 ```mermaid
