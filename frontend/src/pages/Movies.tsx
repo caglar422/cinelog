@@ -204,154 +204,168 @@ const Movies = () => {
           </select>
         </div>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
-          gap: '30px' 
-        }}>
-          {movies.map((movie) => (
-            <div 
-              key={movie._id} 
-              onClick={() => navigate(`/movie/${movie._id}`)}
-              style={{ 
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '15px',
-                overflow: 'hidden',
-                transition: 'all 0.3s',
-                cursor: 'pointer',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-10px)';
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(102, 126, 234, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <img 
-                src={movie.image_url} 
-                alt={movie.title} 
-                style={{ 
-                  width: '100%', 
-                  height: '330px',
-                  objectFit: 'cover'
-                }} 
-              />
-              <div style={{ padding: '15px' }}>
-                <h3 style={{ 
-                  fontSize: '18px', 
-                  marginBottom: '8px',
-                  color: '#fff',
-                  fontWeight: 'bold'
-                }}>
-                  {movie.title}
-                </h3>
-                <p style={{ fontSize: '14px', color: '#bbb', marginBottom: '8px' }}>
-                  {movie.year} • {movie.director}
-                </p>
-                <p style={{ fontSize: '16px', color: '#ffd700', marginBottom: '8px', fontWeight: 'bold' }}>
-                  ⭐ {movie.rating}/10
-                </p>
-                <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>
-                  {getGenre(movie)}
-                </p>
+        {movies.length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '80px 20px',
+            color: '#aaa'
+          }}>
+            <p style={{ fontSize: '60px', marginBottom: '20px' }}>🎬</p>
+            <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#fff', marginBottom: '10px' }}>No movies found</p>
+            <p style={{ fontSize: '16px' }}>Try adjusting your filters or search query.</p>
+          </div>
+        ) : (
+          <>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+              gap: '30px' 
+            }}>
+              {movies.map((movie) => (
+                <div 
+                  key={movie._id} 
+                  onClick={() => navigate(`/movie/${movie._id}`)}
+                  style={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '15px',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s',
+                    cursor: 'pointer',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-10px)';
+                    e.currentTarget.style.boxShadow = '0 15px 40px rgba(102, 126, 234, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <img 
+                    src={movie.image_url} 
+                    alt={movie.title} 
+                    style={{ 
+                      width: '100%', 
+                      height: '330px',
+                      objectFit: 'cover'
+                    }} 
+                  />
+                  <div style={{ padding: '15px' }}>
+                    <h3 style={{ 
+                      fontSize: '18px', 
+                      marginBottom: '8px',
+                      color: '#fff',
+                      fontWeight: 'bold'
+                    }}>
+                      {movie.title}
+                    </h3>
+                    <p style={{ fontSize: '14px', color: '#bbb', marginBottom: '8px' }}>
+                      {movie.year} • {movie.director}
+                    </p>
+                    <p style={{ fontSize: '16px', color: '#ffd700', marginBottom: '8px', fontWeight: 'bold' }}>
+                      ⭐ {movie.rating}/10
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>
+                      {getGenre(movie)}
+                    </p>
 
-                <StarRating 
-                  onRate={(score) => handleRate(movie._id, score)}
-                  currentRating={userRatings[movie._id] || 0}
-                />
+                    <StarRating 
+                      onRate={(score) => handleRate(movie._id, score)}
+                      currentRating={userRatings[movie._id] || 0}
+                    />
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToWatchlist(movie._id);
-                    }}
-                    style={{
-                      padding: '10px',
-                      backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                      color: '#667eea',
-                      border: '1px solid #667eea',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontWeight: 'bold',
-                      transition: 'all 0.3s'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#667eea';
-                      e.currentTarget.style.color = '#fff';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(102, 126, 234, 0.2)';
-                      e.currentTarget.style.color = '#667eea';
-                    }}
-                  >
-                    + Watchlist
-                  </button>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleMarkAsWatched(movie._id);
-                    }}
-                    style={{
-                      padding: '10px',
-                      backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                      color: '#28a745',
-                      border: '1px solid #28a745',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontWeight: 'bold',
-                      transition: 'all 0.3s'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#28a745';
-                      e.currentTarget.style.color = '#fff';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
-                      e.currentTarget.style.color = '#28a745';
-                    }}
-                  >
-                    ✓ Watched
-                  </button>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToWatchlist(movie._id);
+                        }}
+                        style={{
+                          padding: '10px',
+                          backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                          color: '#667eea',
+                          border: '1px solid #667eea',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: 'bold',
+                          transition: 'all 0.3s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#667eea';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(102, 126, 234, 0.2)';
+                          e.currentTarget.style.color = '#667eea';
+                        }}
+                      >
+                        + Watchlist
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMarkAsWatched(movie._id);
+                        }}
+                        style={{
+                          padding: '10px',
+                          backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                          color: '#28a745',
+                          border: '1px solid #28a745',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: 'bold',
+                          transition: 'all 0.3s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#28a745';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+                          e.currentTarget.style.color = '#28a745';
+                        }}
+                      >
+                        ✓ Watched
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '40px', marginBottom: '40px', flexWrap: 'wrap' }}>
-          <button 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: page === 1 ? '#666' : '#667eea', color: '#fff', cursor: page === 1 ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
-          >
-            ← Previous
-          </button>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '40px', marginBottom: '40px', flexWrap: 'wrap' }}>
+              <button 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: page === 1 ? '#666' : '#667eea', color: '#fff', cursor: page === 1 ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+              >
+                ← Previous
+              </button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <button
-              key={p}
-              onClick={() => setPage(p)}
-              style={{ padding: '10px 15px', borderRadius: '8px', border: page === p ? '2px solid #667eea' : '1px solid #667eea', background: page === p ? '#667eea' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 'bold' }}
-            >
-              {p}
-            </button>
-          ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  style={{ padding: '10px 15px', borderRadius: '8px', border: page === p ? '2px solid #667eea' : '1px solid #667eea', background: page === p ? '#667eea' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  {p}
+                </button>
+              ))}
 
-          <button 
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: page === totalPages ? '#666' : '#667eea', color: '#fff', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
-          >
-            Next →
-          </button>
-        </div>
+              <button 
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: page === totalPages ? '#666' : '#667eea', color: '#fff', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+              >
+                Next →
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
