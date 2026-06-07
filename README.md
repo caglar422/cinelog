@@ -2,7 +2,7 @@
 
 A full-stack movie tracking application built with React, Express, MongoDB, and Docker. Track your favorite movies, create watchlists, rate films, and manage your viewing history.
 
-![CineLog](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
@@ -15,12 +15,13 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 - **User Authentication** - Secure registration and login with JWT
 - **Browse Movies** - Explore a curated collection of movies
 - **Search** - Find movies by title, director, or genre
+- **Filter & Sort** - Filter by genre and year, sort by rating, title or release year
+- **Pagination** - Browse movies page by page
 - **Rate Movies** - Give movies a 1-10 star rating
 - **Watchlist** - Save movies to watch later
 - **Watched List** - Track movies you've already seen
+- **Admin Panel** - Administrators can add, edit and delete movies
 - **Responsive Design** - Beautiful UI that works on all devices
-
----
 
 ---
 
@@ -34,6 +35,8 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 ### Movie Discovery
 - **As a movie enthusiast**, I want to browse all available movies so that I can discover new films
 - **As a user**, I want to search for movies by title, director, or genre so that I can quickly find specific films
+- **As a user**, I want to filter movies by genre and year so that I can narrow down my search
+- **As a user**, I want to sort movies by rating, title, or release year so that I can find the best films
 - **As a user**, I want to view detailed information about a movie so that I can decide if I want to watch it
 
 ### Rating & Reviews
@@ -45,6 +48,11 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 - **As a user**, I want to mark movies as watched so that I can track what I've already seen
 - **As a user**, I want to remove movies from my lists so that I can keep them organized
 - **As a user**, I want to see all my watchlist and watched movies in one place so that I can manage my viewing easily
+
+### Admin
+- **As an admin**, I want to add new movies to the catalogue so that users have fresh content to discover
+- **As an admin**, I want to edit existing movie information so that the catalogue stays accurate
+- **As an admin**, I want to delete movies from the catalogue so that I can remove outdated entries
 
 ---
 
@@ -61,17 +69,21 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 - **Express** - Web framework
 - **TypeScript** - Type-safe JavaScript
 - **JWT** - Authentication
-- **bcryptjs** — Password hashing
+- **bcryptjs** - Password hashing
 
 ### Database
 - **MongoDB** - NoSQL database
 - **Mongoose** - ODM for MongoDB
 
+### Testing
+- **Jest** - Testing framework
+- **Supertest** - HTTP integration testing
+- **ts-jest** - TypeScript support for Jest
+- **mongodb-memory-server** - In-memory MongoDB for tests
+
 ### DevOps
 - **Docker** - Containerization
 - **docker-compose** - Multi-container orchestration
-
----
 
 ---
 
@@ -83,21 +95,23 @@ A full-stack movie tracking application built with React, Express, MongoDB, and 
 graph TB
     subgraph "CineLog System"
         User[User/Browser]
+        Admin[Admin/Browser]
         
         subgraph "Frontend Container"
-            React[React + Vite<br/>TypeScript]
+            React[React + ViteTypeScript]
         end
         
         subgraph "Backend Container"
-            API[Express API<br/>TypeScript<br/>JWT Auth]
+            API[Express APITypeScriptJWT Auth]
         end
         
         subgraph "Database Container"
-            MongoDB[(MongoDB<br/>Mongoose)]
+            MongoDB[(MongoDBMongoose)]
         end
     end
     
     User -->|HTTP/HTTPS| React
+    Admin -->|HTTP/HTTPS| React
     React -->|REST API Calls| API
     API -->|Read/Write| MongoDB
     
@@ -122,6 +136,7 @@ erDiagram
         string username
         string email
         string password
+        boolean isAdmin
         date createdAt
     }
     
@@ -241,12 +256,6 @@ This may take 2-5 minutes on the first run.
 docker exec -it cinelog-backend npm run seed
 ```
 
-You should see:
-🌱 Starting database seed...
-🗑️  Cleared existing movies
-✅ Inserted 8 movies
-🎉 Database seeded successfully!
-
 #### 5. Access the Application
 
 Open your browser and navigate to:
@@ -261,6 +270,16 @@ Open your browser and navigate to:
 
 ---
 
+### Admin Access
+
+To access the Admin Panel:
+1. Register a new account or log in
+2. In MongoDB Atlas (or your database), set `isAdmin: true` on the desired user
+3. Log out and log back in
+4. The **Admin Panel** link will appear in the navbar
+
+---
+
 ### Stopping the Application
 
 Press `Ctrl + C` in the terminal where `docker-compose` is running, or run:
@@ -270,8 +289,6 @@ docker-compose down
 ```
 
 ### Restarting the Application
-
-Next time you want to run the app:
 
 ```bash
 docker-compose up
@@ -309,8 +326,9 @@ docker exec -it cinelog-backend npm run seed
 cinelog/
 ├── backend/                # Backend API
 │   ├── src/
+│   │   ├── tests/      # Jest unit & integration tests
 │   │   ├── controllers/    # Request handlers
-│   │   ├── middleware/     # Auth middleware
+│   │   ├── middleware/     # Auth & admin middleware
 │   │   ├── models/         # MongoDB schemas
 │   │   ├── routes/         # API routes
 │   │   ├── seed/           # Sample movie data
@@ -341,9 +359,11 @@ cinelog/
 - `POST /api/auth/login` - Login user
 
 ### Movies
-- `GET /api/movies` - Get all movies (with pagination)
-- `GET /api/movies/search?q=query` - Search movies
+- `GET /api/movies` - Get all movies (with pagination, filtering & sorting)
 - `GET /api/movies/:id` - Get movie details
+- `POST /api/movies` - Add new movie *(Admin only)*
+- `PUT /api/movies/:id` - Update movie *(Admin only)*
+- `DELETE /api/movies/:id` - Delete movie *(Admin only)*
 
 ### Ratings
 - `POST /api/ratings` - Rate a movie
@@ -362,15 +382,41 @@ cinelog/
 
 ---
 
+## 🧪 Testing
+
+The project includes unit and integration tests for the backend using Jest and Supertest.
+
+### Run Tests
+```bash
+cd backend
+npm test
+```
+
+### Test Coverage
+```bash
+cd backend
+npm run test:coverage
+```
+
+### What's Tested
+- **Movie endpoints** - GET, POST, PUT, DELETE operations
+- **Auth endpoints** - Register and login flows
+- **Admin middleware** - Access control for admin-only routes
+- **Error handling** - 401, 403, 404 responses
+
+---
+
 ## 🎯 Usage
 
 1. **Register** - Create a new account
 2. **Login** - Sign in with your credentials
 3. **Browse Movies** - Explore the movie collection
-4. **Rate Movies** - Click stars to rate 1-10
-5. **Add to Watchlist** - Save movies to watch later
-6. **Mark as Watched** - Track movies you've seen
-7. **Search** - Find specific movies
+4. **Filter & Sort** - Filter by genre/year, sort by rating/title/year
+5. **Rate Movies** - Click stars to rate 1-10
+6. **Add to Watchlist** - Save movies to watch later
+7. **Mark as Watched** - Track movies you've seen
+8. **Search** - Find specific movies
+9. **Admin Panel** - Add, edit or delete movies *(Admin only)*
 
 ---
 
@@ -398,21 +444,12 @@ docker-compose down -v
 
 ---
 
-## 🧪 Development
+## 📝 Environment Variables
 
-### Run Backend Locally (without Docker)
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-### Run Frontend Locally (without Docker)
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### Backend (.env)
+PORT=5000
+MONGO_URI=mongodb://mongo:27017/cinelog
+JWT_SECRET=your_super_secret_key_change_this_in_production
 
 ---
 
@@ -420,21 +457,11 @@ npm run dev
 
 - [ ] Movie recommendations based on ratings
 - [ ] Social features (share lists with friends)
-- [ ] Advanced search filters
-- [ ] Movie reviews and comments
 - [ ] Integration with external movie APIs (TMDB)
+- [ ] Password reset functionality
+- [ ] User profile page
 - [ ] Dark/Light theme toggle
-- [ ] Email notifications
 - [ ] Mobile app
-
----
-
-## 📝 Environment Variables
-
-### Backend (.env)
-PORT=5000
-MONGODB_URI=mongodb://mongo:27017/cinelog
-JWT_SECRET=your_super_secret_key_change_this_in_production
 
 ---
 
@@ -452,50 +479,8 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Caglar**
 - GitHub: [@caglar422](https://github.com/caglar422)
-
----
----
-
-## 📸 Screenshots
-
-### Login Page
-![Login](screenshots/login.png)
-
-### Register Page
-![Register](screenshots/register.png)
-
-### Movies Page
-![Movies](screenshots/movies.png)
-
-### Watchlist
-![Watchlist](screenshots/watchlist.png)
-
-### Watched Movies
-![Watched](screenshots/watchedmovies.png)
-
----
-
----
-
-## ⚠️ Known Limitations
-
-- Movie data is seeded (not fetched from external API)
-- No pagination on large movie collections
-- No password reset functionality
-- JWT stored in localStorage (vulnerable to XSS)
-- No user profile page or settings
-- MongoDB runs without authentication in development
-
----
-
-
-## 🙏 Acknowledgments
-
-- Movie posters from [OMDB API](http://www.omdbapi.com/)
-- Icons from [Lucide Icons](https://lucide.dev/)
-- Inspiration from IMDb and Letterboxd
 
 ---
 
