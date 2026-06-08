@@ -1,9 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
+import { AuthRequest } from './auth';
 
-export const adminMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const adminMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = (req as any).userId; // JWT'den geliyor
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).json({ message: 'No user ID found' });
+      return;
+    }
+
     const user = await User.findById(userId);
 
     if (!user || !user.isAdmin) {
